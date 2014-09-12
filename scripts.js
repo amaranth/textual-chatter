@@ -9837,7 +9837,7 @@ var emojiRegExps = [];
 	var syms = [];
 	var sym = '';
 	var idx = 0;
-	
+
 	for (var ent in emojiMap) {
 		syms = emojiMap[ent].split(/\s+/);
 		for (idx = 0, len = syms.length; idx < len; idx++) {
@@ -9850,11 +9850,11 @@ var emojiRegExps = [];
 Textual.viewFinishedLoading = function()
 {
 	Textual.fadeInLoadingScreen(1.00, 0.95);
-	
+
 	setTimeout(function() {
 		Textual.scrollToBottomOfView();
 	}, 500);
-	
+
 	// preload sound files
 	for (var idx = 0, len = soundNames.length; idx < len; idx++) {
 		var name = soundNames[idx];
@@ -9863,14 +9863,14 @@ Textual.viewFinishedLoading = function()
 		sound.src = 'sounds/' + name + '.mp3';
 		soundMap[name] = sound;
 	}
-	
+
 	// automatically switch to dark theme if window colours are darkened
 	var isDark = false;
 	if (app.sidebarInversionIsEnabled()) {
 		Textual.includeStyleResourceFile('dark.css');
 		isDark = true;
 	}
-	
+
 	// continually check for changes to prefs
 	setInterval( function() {
 		var inversion = app.sidebarInversionIsEnabled();
@@ -9893,34 +9893,34 @@ Textual.viewFinishedReload = function()
 Textual.newMessagePostedToView = function(linenum) {
 	// console.log("got here, in newMessagePostedToView: " + linenum);
 	var row = $('#line-' + linenum);
-	
+
 	var sender = row.find('.sender');
 	var message = row.find('.message');
 	var nick = sender.attr('nickname');
 	var time = row.find('.time');
 	var epoch = row.attr('time');
-	
+
 	var prev = row.prev();
 	if (prev.attr('id') == 'mark') prev = prev.prev();
 	while (prev.data('hfc')) { prev = prev.prev(); }
-	
+
 	time.attr( 'title', get_nice_time(epoch, true) );
-	
+
 	// format time
 	var nice_time = get_nice_time( epoch, false );
 	time.html( nice_time );
-	
+
 	if (!sender.length && prev.length) {
 		time.html( '' );
 		// time.css({ visibility: 'hidden' });
 		return;
 	}
-	
+
 	// remove symbols around author
 	if (sender && sender.html && sender.html() && sender.html().replace) {
 		sender.html( sender.html().replace(/(^\&lt\;)|(\&gt\;$)/g, '') );
 	}
-	
+
 	// author repeat check
 	if (prev.length) {
 		var prev_sender = prev.find('.sender');
@@ -9929,14 +9929,14 @@ Textual.newMessagePostedToView = function(linenum) {
 			sender.css({ visibility: 'hidden' });
 			row.addClass('repeating_author');
 		}
-		
+
 		var prev_nice = get_nice_time( prev.attr('time'), false );
 		if (prev_nice == nice_time) {
 			// time.css({ visibility: 'hidden' });
 			time.html( '' );
 		}
 	}
-	
+
 	// filter contents
 	var span_classes = ['message_content'];
 	var html = trim( message.html() );
@@ -9944,7 +9944,7 @@ Textual.newMessagePostedToView = function(linenum) {
 	if (html.match(/^\s*(\<span.+?\<\/span\>)/i)) sender_html = RegExp.$1;
 	html = html.replace(/^\s*(\<span.+?\<\/span\>)\s*/i, '');
 	var html_orig = '' + html;
-	
+
 	// emoji
 	for (var idx = 0, len = emojiRegExps.length; idx < len; idx++) {
 		var emo = emojiRegExps[idx];
@@ -9955,12 +9955,12 @@ Textual.newMessagePostedToView = function(linenum) {
 			}
 		}
 	}
-	
+
 	// correction system
-	if (html.match(/^\*\*.+/)) html = doAppendToPrevious(html, row, sender, message, nick);
-	else if (html.match(/((^\*.+)|(\*$))/)) html = doSmartCorrect(html, row, sender, message, nick);
-	else if (html.match(/^s\/(.+)\/(.+)\/?$/)) html = doRegExpCorrect(html, row, sender, message, nick);
-	
+	//if (html.match(/^\*\*.+/)) html = doAppendToPrevious(html, row, sender, message, nick);
+	//else if (html.match(/((^\*.+)|(\*$))/)) html = doSmartCorrect(html, row, sender, message, nick);
+	if (html.match(/^s\/(.+)\/(.+)\/?$/)) html = doRegExpCorrect(html, row, sender, message, nick);
+
 	else if (html.match(/^\S$/) && prev.length) {
 		// auto-append if single character in length, and immediately previous msg is ours
 		var prev_sender = prev.find('.sender');
@@ -9969,7 +9969,7 @@ Textual.newMessagePostedToView = function(linenum) {
 			html = doAppendToPrevious(html, row, sender, message, nick);
 		}
 	}
-		
+
 	// sound effects
 	var solo_effect = html.match(/^\[\w+\]$/);
 	html = html.replace( /\[(\w+)\]\s*/g, function(m_all, m_g1) {
@@ -9980,7 +9980,7 @@ Textual.newMessagePostedToView = function(linenum) {
 		}
 		return m_all;
 	} );
-	
+
 	// replace contents
 	message.html( sender_html + '<span class="'+span_classes.join(' ')+'">' + html + '</span>' );
 }
@@ -10009,15 +10009,15 @@ function text_to_html(text) {
 
 function doRegExpCorrect(html, row, sender, message, nick) {
 	// apply regular expression style correction to previous messages
-	
+
 	if (html.match(/^s\/(.+?)\/(.+?)\/?$/)) {
 		var search_str = RegExp.$1;
 		var replace_str = RegExp.$2;
 		var search_re = new RegExp( search_str.replace(/(\W)/g, "\\$1") );
-		
+
 		var tries = 20;
 		var prev = row;
-		
+
 		while (tries-- > 0) {
 			prev = prev.prev();
 			if (prev.length) {
@@ -10027,11 +10027,11 @@ function doRegExpCorrect(html, row, sender, message, nick) {
 					// found potential row, search for string
 					var prev_content = prev_message.find('.message_content');
 					var prev_html = html_to_text( trim( prev_content.html() ) );
-					
+
 					if (prev_html.match(search_re)) {
 						prev_html = prev_html.replace( search_re, function(m_all) {
 							var prev_text_clean = m_all.replace(/\s+/g, ' ').replace(/\"/g, "'").replace(/\&/g, '&amp;').replace(/[\<\>]/g, '');
-							return '<span class="correction" title="'+prev_text_clean+'">' + replace_str + '</span>'; 
+							return '<span class="correction" title="'+prev_text_clean+'">' + replace_str + '</span>';
 						} );
 						prev_content.html( text_to_html(prev_html) );
 						row.hide().data('hfc', true);
@@ -10043,17 +10043,17 @@ function doRegExpCorrect(html, row, sender, message, nick) {
 			else tries = 0;
 		} // foreach try
 	} // well formed regex
-	
+
 	return html;
 }
 
 function doAppendToPrevious(html, row, sender, message, nick) {
 	// append text to previous message
 	html = html.replace(/^\*+/, '');
-	
+
 	var tries = 20;
 	var prev = row;
-	
+
 	while (tries-- > 0) {
 		prev = prev.prev();
 		if (prev.length) {
@@ -10072,7 +10072,7 @@ function doAppendToPrevious(html, row, sender, message, nick) {
 		} // prev.length
 		else tries = 0;
 	}
-	
+
 	return html;
 }
 
@@ -10080,7 +10080,7 @@ function doSmartCorrect(html, row, sender, message, nick) {
 	// look for best match on previous posts, replace it
 	var time_start = hires_time_now();
 	var edit_elapsed = 0;
-	
+
 	var orig_html = '' + html;
 	html = html.replace(/^\*+\s*/, '').replace(/\*$/, '');
 	var append = '';
@@ -10089,15 +10089,15 @@ function doSmartCorrect(html, row, sender, message, nick) {
 		append = ' ' + trim(append);
 		html = html.replace(/\s*\*(.+)$/, '');
 	}
-	
+
 	html = trim(html);
 	var words = html.split(/\s+/);
 	var num_words = words.length;
-	
+
 	var tries = 20;
 	var prev = row;
 	var pots = [];
-	
+
 	while (tries-- > 0) {
 		prev = prev.prev();
 		if (prev.length) {
@@ -10110,30 +10110,30 @@ function doSmartCorrect(html, row, sender, message, nick) {
 		} // prev.length
 		else tries = 0;
 	} // while tries
-	
+
 	var best_pot = null;
 	var best_score = 999;
 	var best_word_pos = -1;
 	var best_string = '';
-	
+
 	for (var idx = 0, len = pots.length; idx < len; idx++) {
 		var pot = pots[idx];
 		var pot_words = html_to_text( trim(pot.find('.message_content').html()) ).split(/\s+/);
-		
+
 		if (pot_words.length >= num_words) {
 			for (var idy = 0, ley = (pot_words.length - num_words) + 1; idy < ley; idy++) {
 				var test_string = pot_words.slice(idy, idy + num_words).join(' ');
-				
+
 				var edit_time_start = hires_time_now();
 				var dist = getEditDistance(test_string, html);
 				edit_elapsed += hires_time_now() - edit_time_start;
-				
+
 				// add bias to dist based on how far back correction is in history
 				dist += (idx / pots.length);
-				
+
 				// add more bias based on difference between string lengths
 				dist += Math.abs( test_string.length - html.length ) * 0.5;
-				
+
 				if (dist < best_score) {
 					best_score = dist;
 					best_pot = pot;
@@ -10143,15 +10143,15 @@ function doSmartCorrect(html, row, sender, message, nick) {
 			} // foreach word group
 		} // enough words to consider
 	} // foreach potential row
-	
+
 	// console.log("smart correct: " + best_string + " --> " + html + ": words: " + num_words + ", old chars: " + best_string.length + ", new chars: " + html.length + ", score: " + best_score);
-	
+
 	// good enough score to replace?
 	if (best_score < 8) {
 		var pot = best_pot;
 		var pot_content = pot.find('.message_content');
 		var pot_words = html_to_text( trim(pot_content.html()) ).split(/\s+/);
-		
+
 		// restore punctucation before/after string being replaced
 		if (html.match(/^\w/) && best_string.match(/^([^\w\s]+)/)) {
 			html = RegExp.$1 + html;
@@ -10159,30 +10159,30 @@ function doSmartCorrect(html, row, sender, message, nick) {
 		if (html.match(/\w$/) && best_string.match(/([^\w\s]+)$/)) {
 			html += RegExp.$1;
 		}
-		
+
 		var prev_text_clean = best_string.replace(/\s+/g, ' ').replace(/\"/g, "'").replace(/\&/g, '&amp;').replace(/[\<\>]/g, '');
-		
+
 		pot_words.splice( best_word_pos, num_words, '<span class="correction" title="'+prev_text_clean+'">' + html + append + '</span>' );
 		pot_content.html( text_to_html( pot_words.join(' ') ) );
 		row.hide().data('hfc', true);
 		if (soundMap.correction) soundMap.correction.play();
 	}
-	
+
 	var elapsed = hires_time_now() - time_start;
 	// console.log("smart correct total: " + elapsed + " sec., Levenshtein edit distance: " + edit_elapsed + "sec.");
-	
+
 	return orig_html;
 }
 
 function trim(text) {
 	// strip whitespace from beginning and end of string
 	if (text == null) return '';
-	
+
 	if (text && text.replace) {
 		text = text.replace(/^\s+/, "");
 		text = text.replace(/\s+$/, "");
 	}
-	
+
 	return text;
 }
 
@@ -10241,30 +10241,30 @@ function getEditDistance(a, b){
 	// From: https://gist.github.com/andrei-m/982927
 	/*
 	Copyright (c) 2011 Andrei Mackenzie
-	 
+
 	Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-	 
+
 	The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-	 
+
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	*/
-  if(a.length == 0) return b.length; 
-  if(b.length == 0) return a.length; 
- 
+  if(a.length == 0) return b.length;
+  if(b.length == 0) return a.length;
+
   var matrix = [];
- 
+
   // increment along the first column of each row
   var i;
   for(i = 0; i <= b.length; i++){
     matrix[i] = [i];
   }
- 
+
   // increment each column in the first row
   var j;
   for(j = 0; j <= a.length; j++){
     matrix[0][j] = j;
   }
- 
+
   // Fill in the rest of the matrix
   for(i = 1; i <= b.length; i++){
     for(j = 1; j <= a.length; j++){
@@ -10277,6 +10277,6 @@ function getEditDistance(a, b){
       }
     }
   }
- 
+
   return matrix[b.length][a.length];
 };

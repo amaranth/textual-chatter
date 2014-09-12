@@ -156,13 +156,16 @@ span.emoji {
 /* Remember Line */
 
 div[id=mark] {
-  display: none;
+  margin-top: -1px;
+  border-bottom: 1px dashed #2aa198;
+  -webkit-transition: border 0.2s linear;
+/*  display: none;
   position: relative;
   z-index: 295;
   margin: 6px 0 4px 0 !important;
   height: 5px;
   opacity: 0.8;
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid transparent;*/
 /*  -webkit-border-image: -webkit-gradient(linear, 0% 0%, 100% 0%, from(#F5F4F2), to(#F5F4F2), color-stop(.3,#3FADAD), color-stop(.7,#972694));*/
   /* border-bottom: 1px solid -webkit-gradient(linear, 0% 0%, 100% 0%, from(#F5F4F2), to(#ddd), color-stop(.1,#ffffff), color-stop(.9,#ffffff)); */
 /*  background: -webkit-gradient(linear, 0% 0%, 100% 0%, from(#F5F4F2), to(#F5F4F2), color-stop(.3,#3FADAD), color-stop(.7,#972694));*/
@@ -315,8 +318,8 @@ body div[ltype=action]  {
   /* background: #f4f4f4;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee; */
- 	padding: 3px 5px 3px 5px;
-  text-align: center;
+ 	padding: 3px 0px 3px 0px;
+/*  text-align: center;*/
   margin-left: -5em;
 }
 
